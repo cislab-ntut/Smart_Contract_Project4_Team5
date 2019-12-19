@@ -38,28 +38,21 @@ contract Delicate_Agriculture {
         }
     }
     
-    
-    
-    
+     //買賣結構
     struct buyInfo{
         uint buy_type;
         string buy_type_str;
         uint buy_num;
         uint buy_total_price;
-        uint [5] each_productNum;
         string my_address;
         bool if_buy_successfully;
     }
     
+    //品項和價格
     string [5] public each_product = ['香瓜','胡瓜','芝麻','紅豆','胡蘿蔔'];
     uint [5] public each_price = [30,25,50,20,50];
     
     //合約提供者跟農夫買
-    //uint [5] public product_number = [0,0,0,0,0]; //貨源
-    //uint public price_buy_from_faramer = 0; // 當前買的價格
-    //bool public buy_successfully;
-    
-    //寫法2
     buyInfo public Manager;
     uint [5] public  m_each_buy_num;
     
@@ -86,28 +79,14 @@ contract Delicate_Agriculture {
         }
     }
     
-    
-  
-    
-    
-    
     //消費者跟合約提供者買
-    
-    /*
-    string public customer_buy_type;//購買品項
-    uint public customer_buy_number;//購買數量
-    uint public customer_buy_totalPrice;//總額
-    uint public customer_buy_price;//單價
-    string public customer_address;//消費者地址
-    bool public customer_buy_successfully;
-    */
     
     buyInfo public Customer;
     uint [5] public c_each_buy_num;
     
     function buy_from_contract(uint  product_type, uint  buy_numbers, string memory your_address) public {
-        delivery_successfully = false;
-        //customer_buy_successfully = false;
+        //delivery_successfully = false;
+        Delivery.if_deliver_successfully =false;
         Customer.if_buy_successfully = false;
         if(product_type < 0 || product_type >4){
             Customer.buy_type = 0;
@@ -121,14 +100,6 @@ contract Delicate_Agriculture {
             //do nothing
         }else{ //start buying
             if(buy_numbers <= m_each_buy_num[product_type]){//庫存夠 可以買
-            /*
-                customer_buy_successfully =true;
-                customer_buy_type = each_product[product_type];//購買品項
-                customer_buy_number = buy_numbers;//購買數量同步
-                customer_buy_totalPrice = each_price[product_type] * buy_numbers;//總額同步
-                customer_buy_price = each_price[product_type];//單價
-                customer_address = your_address;//地址同步
-             */   
                 
                 Customer.buy_type = product_type;
                 Customer.buy_type_str = each_product[product_type];
@@ -140,7 +111,7 @@ contract Delicate_Agriculture {
                 
                 m_each_buy_num[product_type] = m_each_buy_num[product_type] - c_each_buy_num[product_type];
                 
-                delivery(Customer.buy_type_str,Customer.buy_num,Customer.buy_total_price,Customer.my_address);
+                deliver(Customer.buy_type_str,Customer.buy_num,Customer.buy_total_price,Customer.my_address);
             }else{//消費者買的數量 > 庫存
                 // do nothing
                 Customer.buy_type = product_type;
@@ -153,18 +124,41 @@ contract Delicate_Agriculture {
         }
     }
     
+   
+    //寄送結構
+    struct deliverInfo{
+        string deliver_type_str;
+        uint deliver_num;
+        uint deliver_total_price;
+        string deliver_address;
+        bool if_deliver_successfully;
+    }
+    
     //農夫送給消費者
+    deliverInfo public Delivery;
+    
+    /*
     bool public delivery_successfully;
     string public d_type;
     uint public d_number;
     uint d_total_price;
     string public d_address;
-    function delivery(string memory _d_type,uint _d_number, uint _d_total_price,  string memory _d_address) private{
-        delivery_successfully = true;
-        d_type = _d_type;
-        d_number = _d_number;
-        d_total_price = _d_total_price;
-        d_address = _d_address;
+    */
+    
+    function deliver(string memory _d_type,uint _d_number, uint _d_total_price,  string memory _d_address) private{
+        
+        Delivery.deliver_type_str = _d_type;
+        Delivery.deliver_num = _d_number;
+        Delivery.deliver_total_price = _d_total_price;
+        Delivery.deliver_address = _d_address;
+        Delivery.if_deliver_successfully = true;
+        
+        
+        //delivery_successfully = true;
+        //d_type = _d_type;
+       // d_number = _d_number;
+        //d_total_price = _d_total_price;
+        //d_address = _d_address;
     }
     
 }
